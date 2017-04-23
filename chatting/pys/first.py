@@ -6,7 +6,6 @@ class First(QtWidgets.QDialog):
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = uic.loadUi("uis/main.ui",self)
-        self.ui.setTitle("채팅")
         self.ui.show()
         main.Vars.text = ""
         main.Vars.name = ""

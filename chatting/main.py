@@ -1,4 +1,5 @@
 import sys
+from socket import *
 from PyQt5 import QtWidgets, uic
 from pys import first
 
