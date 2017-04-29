@@ -1,36 +1,30 @@
-import socket
-import sys
+import socket, sys, threading
+from PyQt5 import QtWidgets, uic
+from pys import first
 
 HOST, PORT = '127.0.0.1', 3030
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((HOST,PORT))
-    print('='*50)
+name=""
+text=""
 
-except socket.error as msg:
-    print("Failed to create socket.\nError code: %s\nError msg: %s"%(str(msg[0]),msg[1]))
-    sys.exit(0)
-print("Socket created")
 
+
+if __name__ == '__main__':
+
+    app = QtWidgets.QApplication(sys.argv)
+    w1 = first.First(sock, HOST, PORT)
+    sys.exit(app.exec_())
+
+
+
+
+'''
 while True:
     data = input("text: ")
 
     if data == ':/quit' or not data:
         sock.close()
         break
-
-    try:
-        received = sock.recv(1024)
-    finally:
-        print('='*50)
-        print("Recevied: {}".format(received))
-        print('='*50)
-
-    try:
-        sock.sendall((data).encode('utf8'))
-
-    finally:
-        print('='*50)
-        print("Sent:     {}".format(data))
-        print('='*50)
+    sock.sendall((data).encode('utf8'))
+    '''
