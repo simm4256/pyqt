@@ -1,5 +1,5 @@
 import socket, sys, threading
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic, QtGui
 import client
 
 th=[]
@@ -20,38 +20,35 @@ class First(QtWidgets.QDialog):
             sys.exit(0)
         print("Socket created")
 
-        self.l = threading.Thread(target=self.listen, args=(sock,))
-        th.append(self.l)
-        self.l.start()
-
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = uic.loadUi("uis/main.ui",self)
         self.ui.show()
+
+        self.l = threading.Thread(target=self.listen, args=(sock,self.ui))
+        th.append(self.l)
+        self.l.start()
+
     def nameChange(self):
-        print(self.ui)
         self.text = "User " + self.name + " change name to : " + self.ui.lineEdit.text()
         self.ui.textBrowser.append(self.text)
         self.name = self.ui.lineEdit.text()
     def textChange(self):
-        print(self)
-        print(self.ui)
-        self.text = self.name + " : " + self.ui.lineEdit_2.text()
+        self.text = self.ui.lineEdit_2.text()
         self.ui.lineEdit_2.setText("")
         self.sock.sendall(self.text.encode('utf8'))
-    def fs_nameChanged(self,name):
-        print(self)
-        print(self.ui)
-        self.name=name
-        self.ui.lineEdit.setText(name)
-    def fs_textUpdated(self,text):
-        print(self)
-        print(self.ui)
-        self.ui.textBrowser.append(text)
-    def listen(self, s):
+    def fs_nameChanged(self,name, ui):
+        ui.name=name
+        ui.lineEdit.setText("user"+name)
+    def fs_textUpdated(self,text, ui):
+        ui.textBrowser.append(text)
+        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
+    def listen(self, s, ui):
         while 1:
             read = s.recv(1024).decode('utf8')
-            print(read)
-            if read[0:19]=="!server create user":
-                self.fs_nameChanged(read)
+            print(read[1:20])
+            if read[1:20]=="!server create user":
+                x=int(read[0])
+                self.fs_textUpdated(read[20+x:], ui)
+                self.fs_nameChanged(read[20:20+x], ui)
             else:
-                self.fs_textUpdated(read)
+                self.fs_textUpdated(read, ui)

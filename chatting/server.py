@@ -7,10 +7,14 @@ conns = []
 def to_client(conn, addr, count):
     cnt = count
     global conns
+    x=0
+    while count:
+        x+=1
+        count = (int)(count/10)
+    conn.sendall((str(x)+"!server create user%d"%cnt).encode('utf8'))
     for i in range(len(conns)):
         conns[i].sendall(("%s에서 유저 %d님이 접속했습니다."%(addr[0],cnt)).encode('utf8'))
     print("%s에서 유저 %d님이 접속했습니다."%(addr[0],cnt))
-    conn.sendall(("!server create user%d"%cnt).encode('utf8'))
 
     try:
         while 1:
@@ -25,7 +29,6 @@ def to_client(conn, addr, count):
             print(read)
             for i in range(len(conns)):
                 conns[i].sendall(read.encode('utf8'))
-            conn.sendall(read.encode('utf8'))
     except:
         conns.remove(conn)
         print("%d // 유저 %d님이 나갔습니다."%(len(conns),cnt))
