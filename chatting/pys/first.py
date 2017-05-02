@@ -1,10 +1,7 @@
 import socket, sys, threading
 from PyQt5 import QtWidgets, uic, QtGui
-import client
 
-th=[]
-
-class First(QtWidgets.QDialog):
+class MainWindow(QtWidgets.QDialog):
     def __init__(self, sock, HOST, PORT, parent=None):
         self.text=""
         self.name=""
@@ -16,7 +13,7 @@ class First(QtWidgets.QDialog):
             sock.connect((HOST,PORT))
             print('='*50)
         except socket.error as msg:
-            print("Failed to create socket.\nError code: %s\nError msg: %s"%(str(msg[0]),msg[1]))
+            print("잘못된 주소를 입력하셨습니다.")
             sys.exit(0)
         print("Socket created")
 
@@ -25,7 +22,6 @@ class First(QtWidgets.QDialog):
         self.ui.show()
 
         self.l = threading.Thread(target=self.listen, args=(sock,self.ui))
-        th.append(self.l)
         self.l.start()
 
     def nameChange(self):
